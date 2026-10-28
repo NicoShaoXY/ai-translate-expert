@@ -1,0 +1,24 @@
+# 系统与编辑器
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+
+# 依赖
+node_modules/
+package-lock.json
+pnpm-lock.yaml
+
+# 本地工具与会话数据
+.workbuddy/
+.workbuddy-ai/
+
+# 历史归档与构建产物（发布包走 GitHub Releases）
+历史/
+*.zip
+*.crx
+*.pem
+
+# 临时文件
+*.log
+*.tmp

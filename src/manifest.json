@@ -1,0 +1,57 @@
+{
+  "manifest_version": 3,
+  "name": "AI翻译专家",
+  "short_name": "AI翻译专家",
+  "version": "1.7.0",
+  "description": "AI翻译专家：划词浮标、右键翻译、Alt+T、非中文页面自动整页翻译（支持双语对照）；内置 Google / 国内双通道自动切换，国内接口可替换为百度、有道、腾讯云官方 API，也可接入自备 AI 模型。",
+  "minimum_chrome_version": "102",
+  "permissions": ["storage", "contextMenus", "scripting", "activeTab"],
+  "host_permissions": [
+    "https://translate.googleapis.com/*",
+    "https://transmart.qq.com/*",
+    "https://fanyi-api.baidu.com/*",
+    "https://openapi.youdao.com/*",
+    "https://tmt.tencentcloudapi.com/*"
+  ],
+  "optional_host_permissions": ["https://*/*", "http://*/*"],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["langs.js", "panel-style.js", "panel-template.js", "content.js", "page-translate.js"],
+      "run_at": "document_idle",
+      "all_frames": true
+    }
+  ],
+  "action": {
+    "default_title": "AI翻译专家",
+    "default_popup": "popup.html",
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "32": "icons/icon32.png",
+      "48": "icons/icon48.png",
+      "128": "icons/icon128.png"
+    }
+  },
+  "options_ui": {
+    "page": "options.html",
+    "open_in_tab": true
+  },
+  "commands": {
+    "translate-selection": {
+      "suggested_key": {
+        "default": "Alt+T",
+        "mac": "Alt+T"
+      },
+      "description": "翻译当前选中的文字"
+    }
+  },
+  "icons": {
+    "16": "icons/icon16.png",
+    "32": "icons/icon32.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  }
+}

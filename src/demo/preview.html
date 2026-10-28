@@ -1,0 +1,453 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AI翻译专家 · 效果预览</title>
+<style>
+  :root {
+    --bg: #f6f7f9;
+    --card: #ffffff;
+    --fg: #1f2328;
+    --muted: #6b7280;
+    --faint: #9aa3ad;
+    --line: #e4e7eb;
+    --accent: #1a73e8;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    padding: 40px 28px 64px;
+    background: var(--bg);
+    color: var(--fg);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC",
+      "Hiragino Sans GB", "Microsoft YaHei", Arial, sans-serif;
+    font-size: 14px;
+    line-height: 1.7;
+    -webkit-font-smoothing: antialiased;
+  }
+  .wrap { max-width: 1120px; margin: 0 auto; }
+
+  .eyebrow {
+    display: inline-block;
+    padding: 3px 9px;
+    border: 1px solid #d8e2f3;
+    border-radius: 999px;
+    background: #f2f7ff;
+    color: #1a5cbf;
+    font-size: 11.5px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+  }
+  h1 {
+    margin: 12px 0 8px;
+    font-size: 26px;
+    font-weight: 650;
+    letter-spacing: -0.01em;
+    line-height: 1.35;
+  }
+  .lead {
+    margin: 0 0 28px;
+    max-width: 760px;
+    color: var(--muted);
+    font-size: 13.5px;
+  }
+
+  /* 模拟浏览器窗口 */
+  .frame {
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    background: #fff;
+    box-shadow: 0 18px 44px rgba(16, 24, 40, 0.08);
+    overflow: hidden;
+    margin-bottom: 34px;
+  }
+  .frame-bar {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 10px 14px;
+    border-bottom: 1px solid var(--line);
+    background: #fbfcfd;
+  }
+  .tl { width: 10px; height: 10px; border-radius: 50%; background: #e3e6ea; }
+  .addr {
+    margin-left: 10px;
+    padding: 3px 10px;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    background: #fff;
+    color: var(--faint);
+    font-size: 11.5px;
+  }
+  .stage {
+    position: relative;
+    padding: 34px 40px 40px;
+    min-height: 520px;
+    background:
+      repeating-linear-gradient(to bottom, #fcfcfd 0, #fcfcfd 33px, #f8f9fb 33px, #f8f9fb 34px);
+  }
+  .article { max-width: 560px; }
+  .article .kicker {
+    margin: 0 0 6px;
+    color: var(--faint);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+  .article h2 {
+    margin: 0 0 12px;
+    font-size: 21px;
+    font-weight: 640;
+    line-height: 1.35;
+  }
+  .article p { margin: 0 0 14px; color: #3a4048; font-size: 13.5px; line-height: 1.85; }
+  .article mark {
+    background: #dfeaff;
+    color: inherit;
+    padding: 1px 2px;
+    border-radius: 2px;
+  }
+  .article .dim { color: #b8bec7; }
+
+  /* 整页翻译对照 */
+  .pair {
+    display: grid;
+    grid-template-columns: 1fr 34px 1fr;
+    align-items: start;
+    gap: 8px;
+    margin-bottom: 34px;
+  }
+  .pair-col {
+    background: #fff;
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 14px 16px 16px;
+  }
+  .pair-text { margin: 0; font-size: 13px; line-height: 1.8; color: #3a4048; }
+  .bi {
+    margin-left: 4px;
+    padding: 0 3px;
+    border-left: 2px solid rgba(26, 115, 232, 0.45);
+    background: rgba(26, 115, 232, 0.07);
+    border-radius: 2px;
+    color: inherit;
+  }
+  .pair-col.is-after { border-color: #d8e2f3; background: #fbfdff; }
+  .pair-arrow {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    color: var(--faint);
+    font-size: 13px;
+  }
+  .stage-slim { padding: 26px 34px 30px; min-height: 0; }
+
+  /* 状态区 */
+  .states-head {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+    margin: 0 0 14px;
+  }
+  .states-head h2 { margin: 0; font-size: 15px; font-weight: 650; }
+  .states-head span { color: var(--muted); font-size: 12.5px; }
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 18px;
+    margin-bottom: 34px;
+  }
+  .grid .cell {
+    background: #fff;
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 14px;
+  }
+  .cell-label {
+    margin: 0 0 10px;
+    color: var(--faint);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  /* 说明 */
+  .notes {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 18px;
+  }
+  .note {
+    border-top: 1px solid #dcdfe4;
+    padding-top: 14px;
+  }
+  .note h3 { margin: 0 0 6px; font-size: 13px; font-weight: 650; }
+  .note p { margin: 0; color: var(--muted); font-size: 12.5px; line-height: 1.7; }
+  code {
+    padding: 1px 5px;
+    border-radius: 4px;
+    background: #eceff3;
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 11.5px;
+  }
+  @media (max-width: 900px) {
+    .grid, .notes { grid-template-columns: 1fr; }
+    .stage { padding: 22px 18px 30px; min-height: 0; }
+    body { padding: 24px 16px 48px; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <span class="eyebrow">效果预览</span>
+  <h1>AI翻译专家</h1>
+  <p class="lead">原版扩展（Chrome 商店 ID <code>aapbdbdomjkkjkaonfhkkikfgjllcleb</code>，约 3500 万用户）已于 2024 年停更下架。这一版按原版交互重写：选中文字 → 出现浮标 → 点击弹出译文卡片，另有右键菜单与 Alt+T 快捷键。以下是安装后的真实外观。</p>
+
+  <div class="frame">
+    <div class="frame-bar">
+      <span class="tl"></span><span class="tl"></span><span class="tl"></span>
+      <span class="addr">example.com/notes/chrome-translate</span>
+    </div>
+    <div class="stage" id="stage">
+      <article class="article">
+        <p class="kicker">浏览器笔记</p>
+        <h2>内置翻译能翻整页，但翻不了一句</h2>
+        <p>Chrome 自带的翻译功能会整页接管：识别语种、弹出提示条、把整篇文本替换掉。这对读长文很方便，可当你只想确认某个术语时，它显得过重。</p>
+        <p><mark id="sel">Built-in translation rewrites the whole document, which is convenient for long reads but heavy for a single sentence.</mark></p>
+        <p class="dim">于是又回到划词即译：选一段、弹出译文、看完即走，不动页面结构。原版扩展当年解决的正是这件事，这也是它被复刻的原因。</p>
+      </article>
+      <div id="hero-host"></div>
+    </div>
+  </div>
+
+  <div class="states-head">
+    <h2>整页翻译</h2>
+    <span>非中文页面自动触发；开启双语对照时保留原文，译文插在右侧，关闭则只留译文</span>
+  </div>
+
+  <div class="frame">
+    <div class="frame-bar">
+      <span class="tl"></span><span class="tl"></span><span class="tl"></span>
+      <span class="addr">example.com/notes/chrome-translate · 已翻译</span>
+    </div>
+    <div class="stage stage-slim" id="stage2">
+      <article class="article">
+        <p class="kicker">浏览器笔记 · 双语对照已开启</p>
+        <h2>Built-in translation handles whole pages<span class="bi">整页翻译</span></h2>
+        <p>Chrome takes over the page: detect, prompt, replace.<span class="bi">Chrome 会整页接管：识别、提示、替换。</span></p>
+        <p style="color:#9aa3ad">Useful for long reads, heavy for one term.<span class="bi">读长文方便，查一个术语时过重。</span></p>
+      </article>
+    </div>
+  </div>
+
+  <div class="pair">
+    <div class="pair-col">
+      <p class="cell-label">关闭双语对照 · 原文被替换</p>
+      <p class="pair-text">Chrome takes over the whole page: detect, prompt, replace. Convenient for long reads, heavy for a single term.</p>
+    </div>
+    <div class="pair-arrow">→</div>
+    <div class="pair-col is-after">
+      <p class="cell-label">页面上只剩译文</p>
+      <p class="pair-text">Chrome 会整页接管：识别、提示、替换。读长文方便，查单个术语时过重。</p>
+    </div>
+  </div>
+
+  <div class="states-head">
+    <h2>卡片状态</h2>
+    <span>同一套组件在加载、成功、失败三种情况下的表现</span>
+  </div>
+  <div class="grid" id="grid"></div>
+
+  <div class="notes">
+    <div class="note">
+      <h3>触发方式</h3>
+      <p>划词浮标、右键「翻译所选文字」、快捷键 Alt+T（macOS 为 Option+T）三条路径，均走同一个翻译通道。</p>
+    </div>
+    <div class="note">
+      <h3>卡片内操作</h3>
+      <p>切换目标语言即时重译、复制译文、朗读、固定位置、编辑原文后重译，Esc 关闭。</p>
+    </div>
+    <div class="note">
+      <h3>整页翻译</h3>
+      <p>先按 html lang 与文字脚本比例判定语种，仅当页面不是中文时触发；按段落合并请求，顶部提示可一键还原原文。</p>
+    </div>
+    <div class="note">
+      <h3>双语对照</h3>
+      <p>开关默认关闭。关闭时页面只显示译文、不留对照节点；随时切换会清掉已插入的对照内容并按新模式重排。</p>
+    </div>
+    <div class="note">
+      <h3>AI 翻译模式</h3>
+      <p>选服务商、贴密钥即可，接口地址由预设带出；缺项会被明确拦住并提示缺哪一项，保存时自动跑一次连通性测试。</p>
+    </div>
+    <div class="note">
+      <h3>隔离与隐私</h3>
+      <p>样式挂在 shadow DOM 内，不污染页面；正文只发往 Google 翻译接口，不做本地留存。</p>
+    </div>
+  </div>
+</div>
+
+<script src="../langs.js"></script>
+<script src="../panel-style.js"></script>
+<script src="../panel-template.js"></script>
+<script>
+(function () {
+  'use strict';
+  var LANGS = window.__GT_LANGS || [];
+
+  function adopt(shadow, extra) {
+    try {
+      var a = new CSSStyleSheet();
+      a.replaceSync(window.__GT_PANEL_CSS || '');
+      shadow.adoptedStyleSheets = extra ? [a, extra] : [a];
+    } catch (e) {
+      var st = document.createElement('style');
+      st.textContent = window.__GT_PANEL_CSS || '';
+      shadow.appendChild(st);
+    }
+  }
+
+  function fillTargets(shadow, value) {
+    var sel = shadow.querySelector('[data-role="target"]');
+    LANGS.forEach(function (p) {
+      var o = document.createElement('option');
+      o.value = p[0];
+      o.textContent = p[1];
+      sel.appendChild(o);
+    });
+    sel.value = value || 'zh-CN';
+    return sel;
+  }
+
+  function mount(parent, css, styleText) {
+    var host = document.createElement('div');
+    host.style.cssText = styleText || 'position:absolute; inset:0; pointer-events:none; z-index:6;';
+    parent.appendChild(host);
+    var shadow = host.attachShadow({ mode: 'open' });
+    var extra = null;
+    if (css) { extra = new CSSStyleSheet(); extra.replaceSync(css); }
+    adopt(shadow, extra);
+    shadow.innerHTML = window.__GT_PANEL_HTML;
+    return shadow;
+  }
+
+  /* ---------- 主场景：浮标 + 卡片 ---------- */
+  var stage = document.getElementById('stage');
+  var hero = mount(stage, '.gt-btn,.gt-card{position:absolute}');
+
+  var heroBtn = hero.querySelector('.gt-btn');
+  var heroCard = hero.querySelector('.gt-card');
+  fillTargets(hero, 'zh-CN');
+
+  // 依据真实选区位置摆放浮标与卡片，避免写死坐标
+  var mark = document.getElementById('sel');
+  var mr = mark.getBoundingClientRect();
+  var sr = stage.getBoundingClientRect();
+  var ax = mr.right - sr.left;
+  var ay = mr.bottom - sr.top;
+  heroBtn.style.left = Math.round(ax + 8) + 'px';
+  heroBtn.style.top = Math.round(ay + 4) + 'px';
+
+  // 舞台够宽时把卡片放在正文右侧（不遮挡原文），否则回落到选区下方
+  var cardW = 384, gutter = 28;
+  var tightW = 560;
+  if (sr.width - 80 - tightW > cardW + gutter) {
+    heroCard.style.left = Math.round(sr.width - cardW - 32) + 'px';
+    heroCard.style.top = Math.round(Math.max(52, mr.top - sr.top - 6)) + 'px';
+  } else {
+    heroCard.style.left = Math.round(Math.max(8, Math.min(ax - 280, sr.width - cardW - 12))) + 'px';
+    heroCard.style.top = Math.round(ay + 44) + 'px';
+  }
+  hero.querySelector('[data-role="src"]').textContent = '英语';
+  hero.querySelector('[data-role="out"]').textContent =
+    '内置翻译会重写整个文档，读长文很方便，但只翻译一句话时显得过重。';
+  hero.querySelector('[data-role="orig"]').textContent =
+    'Built-in translation rewrites the whole document, which is convenient for long reads but heavy for a single sentence.';
+  hero.querySelector('[data-role="status"]').textContent = '';
+  var heroBrand = hero.querySelector('.gt-brand');
+  if (heroBrand) heroBrand.textContent = '国内翻译接口';
+  heroBtn.style.pointerEvents = 'auto';
+  hero.querySelectorAll('.gt-icon').forEach(function (b) { b.style.pointerEvents = 'auto'; });
+  stage.style.minHeight = Math.round(Math.max(520, ay + 120)) + 'px';
+
+  /* ---------- 整页翻译完成提示 ---------- */
+  var stage2 = document.getElementById('stage2');
+  if (stage2) {
+    var tHost = document.createElement('div');
+    tHost.style.cssText = 'position:absolute; inset:0; pointer-events:none; z-index:6;';
+    stage2.appendChild(tHost);
+    var tShadow = tHost.attachShadow({ mode: 'open' });
+    try {
+      var c1 = new CSSStyleSheet();
+      c1.replaceSync(window.__GT_PANEL_CSS || '');
+      var c2 = new CSSStyleSheet();
+      c2.replaceSync('.gt-toast{position:absolute !important; top:12px !important;} .gt-toast-act{pointer-events:auto} .gt-card,.gt-btn{display:none !important}');
+      tShadow.adoptedStyleSheets = [c1, c2];
+    } catch (e) {}
+    tShadow.innerHTML = window.__GT_PANEL_HTML;
+    var toastEl = tShadow.querySelector('.gt-toast');
+    toastEl.textContent = '已翻译为中文（双语对照）· 24 段';
+    var act = document.createElement('button');
+    act.type = 'button';
+    act.className = 'gt-toast-act';
+    act.textContent = '显示原文';
+    toastEl.appendChild(act);
+    toastEl.hidden = false;
+    toastEl.classList.add('is-show');
+  }
+
+  /* ---------- 状态卡片 ---------- */
+  var grid = document.getElementById('grid');
+  var samples = [
+    {
+      label: '成功',
+      build: function (shadow) {
+        shadow.querySelector('[data-role="src"]').textContent = '英语';
+        shadow.querySelector('[data-role="out"]').textContent = '选中一段文字，译文立刻出现。';
+        shadow.querySelector('[data-role="orig"]').textContent = 'Select a passage and the translation shows up immediately.';
+      }
+    },
+    {
+      label: '加载中',
+      build: function (shadow) {
+        var out = shadow.querySelector('[data-role="out"]');
+        out.className = 'gt-out is-loading';
+        out.textContent = '翻译中…';
+        shadow.querySelector('[data-role="orig"]').textContent = 'The panel keeps its shape while the request is in flight.';
+      }
+    },
+    {
+      label: '失败',
+      build: function (shadow) {
+        var out = shadow.querySelector('[data-role="out"]');
+        out.className = 'gt-out is-error';
+        out.textContent = '请求过于频繁，已触发翻译接口限流，请稍后再试';
+        shadow.querySelector('[data-role="src"]').textContent = '自动检测';
+        shadow.querySelector('[data-role="orig"]').textContent = 'Rate limited by the upstream endpoint.';
+      }
+    }
+  ];
+
+  samples.forEach(function (s) {
+    var cell = document.createElement('div');
+    cell.className = 'grid-cell';
+    var label = document.createElement('p');
+    label.className = 'cell-label';
+    label.textContent = s.label;
+    var box = document.createElement('div');
+    box.className = 'cell';
+    cell.appendChild(label);
+    cell.appendChild(box);
+    grid.appendChild(cell);
+
+    var shadow = mount(box, '.gt-card{position:relative;width:100%;max-width:none;box-shadow:0 4px 14px rgba(16,24,40,.07)} .gt-btn{display:none}', 'position:relative; display:block;');
+    fillTargets(shadow, 'zh-CN');
+    s.build(shadow);
+  });
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <title>AI翻译专家</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <header class="head">
+    <img class="logo" src="icons/icon48.png" alt="" width="28" height="28">
+    <div class="titles">
+      <h1>AI翻译专家</h1>
+      <p class="sub">多引擎翻译<span class="sep">·</span>v<span id="ver">1.5.0</span></p>
+    </div>
+  </header>
+
+  <section class="field">
+    <label for="target">翻译成</label>
+    <select id="target" aria-label="目标语言"></select>
+  </section>
+
+  <section class="toggle">
+    <div class="toggle-text">
+      <div class="toggle-label">划词浮标</div>
+      <div class="toggle-hint">选中出翻译图标</div>
+    </div>
+    <label class="switch">
+      <input type="checkbox" id="bubble">
+      <span class="slider"></span>
+    </label>
+  </section>
+
+  <section class="toggle">
+    <div class="toggle-text">
+      <div class="toggle-label">选中即翻译</div>
+      <div class="toggle-hint">松开鼠标直接出译文</div>
+    </div>
+    <label class="switch">
+      <input type="checkbox" id="auto">
+      <span class="slider"></span>
+    </label>
+  </section>
+
+  <section class="toggle compact">
+    <div class="toggle-label">自动翻译整页</div>
+    <label class="switch">
+      <input type="checkbox" id="autoPage">
+      <span class="slider"></span>
+    </label>
+  </section>
+
+  <section class="toggle compact">
+    <div class="toggle-label">双语对照</div>
+    <label class="switch">
+      <input type="checkbox" id="bilingual">
+      <span class="slider"></span>
+    </label>
+  </section>
+
+  <div class="engine">
+    <div class="engine-cap">翻译引擎<span class="engine-note">二选一</span></div>
+    <section class="toggle compact">
+      <div class="toggle-label">AI 翻译<span class="tag" id="aiTag">未配置</span></div>
+      <label class="switch">
+        <input type="checkbox" id="aiEnabled">
+        <span class="slider"></span>
+      </label>
+    </section>
+    <section class="toggle compact">
+      <div class="toggle-label">非 AI 翻译<span class="tag" id="nonAiTag">免费接口</span></div>
+      <label class="switch">
+        <input type="checkbox" id="nonAiEnabled">
+        <span class="slider"></span>
+      </label>
+    </section>
+    <div class="engine-hint" id="engineHint">检测网络环境…</div>
+  </div>
+
+  <div class="page-row">
+    <div class="page-info">
+      <div class="toggle-label">当前页面</div>
+      <div class="toggle-hint" id="pageHint">检测中…</div>
+    </div>
+    <button class="mini" id="pageAction" data-action="">翻译此页</button>
+  </div>
+
+  <button class="primary" id="translateNow">翻译当前选中文字</button>
+  <p class="tip" id="tip">快捷键 Alt+T · 右键菜单「翻译所选文字」</p>
+
+  <footer class="foot">
+    <button class="link" id="openOptions">全部设置</button>
+    <span class="dot">·</span>
+    <button class="link" id="openAi">AI 配置</button>
+    <span class="dot">·</span>
+    <button class="link" id="openShortcuts">快捷键</button>
+  </footer>
+
+  <script src="langs.js"></script>
+  <script src="popup.js"></script>
+</body>
+</html>

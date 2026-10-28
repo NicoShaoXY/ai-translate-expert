@@ -1,0 +1,290 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <title>AI翻译专家 · 设置</title>
+  <link rel="stylesheet" href="options.css">
+</head>
+<body>
+  <div class="wrap">
+    <header class="page-head">
+      <h1>AI翻译专家 · 设置</h1>
+      <p class="lead">AI 驱动的划词与整页翻译：选中文字点浮标，或按 Alt+T 直接翻译；页面非中文时自动整页翻译。</p>
+    </header>
+
+    <section class="card">
+      <h2>翻译语言</h2>
+      <div class="row">
+        <div class="row-text">
+          <div class="label">目标语言</div>
+          <div class="hint">译文默认输出语言，可在翻译卡片内临时切换</div>
+        </div>
+        <select id="target" aria-label="目标语言"></select>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>交互</h2>
+      <div class="row">
+        <div class="row-text">
+          <div class="label">划词浮标</div>
+          <div class="hint">选中文字后，在选区末尾显示翻译图标</div>
+        </div>
+        <label class="switch"><input type="checkbox" id="bubble"><span class="slider"></span></label>
+      </div>
+      <div class="row">
+        <div class="row-text">
+          <div class="label">选中即翻译</div>
+          <div class="hint">松开鼠标立刻弹出译文，无需点击图标</div>
+        </div>
+        <label class="switch"><input type="checkbox" id="auto"><span class="slider"></span></label>
+      </div>
+      <div class="row">
+        <div class="row-text">
+          <div class="label">自动翻译整页</div>
+          <div class="hint">打开的非中文页面自动整体翻译为中文，页面顶部可一键还原；排除站点同样生效</div>
+        </div>
+        <label class="switch"><input type="checkbox" id="autoPage"><span class="slider"></span></label>
+      </div>
+      <div class="row">
+        <div class="row-text">
+          <div class="label">双语对照</div>
+          <div class="hint">保留原文，把译文插在右侧；关闭时页面只显示译文，不留任何对照内容</div>
+        </div>
+        <label class="switch"><input type="checkbox" id="bilingual"><span class="slider"></span></label>
+      </div>
+      <div class="row block">
+        <div class="row-text">
+          <div class="label">排除站点</div>
+          <div class="hint">每行一个域名，例如 mail.google.com。命中后该站点不显示浮标、不响应快捷键。</div>
+        </div>
+        <textarea id="exclude" rows="4" spellcheck="false" placeholder="example.com&#10;docs.internal.corp"></textarea>
+      </div>
+    </section>
+
+    <section class="card" id="service">
+      <h2>翻译服务（取数层）</h2>
+      <p class="card-desc">本模块决定「译文从哪里来」，是整条翻译链路的取数层：默认在 <b>Google 免费接口</b> 与 <b>国内接口</b>（腾讯交互翻译，免密钥）之间按网络环境自动切换——能访问 Google 时用 Google，否则用国内接口；Google 触发限流时自动降级到国内接口。开启 AI 翻译后本模块整体停用，两者互斥。</p>
+      <div class="row">
+        <div class="row-text">
+          <div class="label">非 AI 翻译</div>
+          <div class="hint" id="nonAiHint">免费接口 / 国内接口自动切换，均无需密钥；与 AI 翻译互斥</div>
+        </div>
+        <label class="switch"><input type="checkbox" id="nonAiEnabled"><span class="slider"></span></label>
+      </div>
+      <div class="row">
+        <div class="row-text">
+          <div class="label">当前通道</div>
+          <div class="hint" id="channelHint">未配置 API Key，使用免费接口，可能被限流</div>
+        </div>
+        <span class="badge" id="channelBadge">免费接口</span>
+      </div>
+      <div class="row">
+        <div class="row-text">
+          <div class="label">网络环境</div>
+          <div class="hint" id="netHint">正在检测能否直连 Google…</div>
+        </div>
+        <div class="inline">
+          <span class="badge" id="netBadge">检测中</span>
+          <button class="btn ghost" id="probeBtn">重新检测</button>
+        </div>
+      </div>
+      <div class="row">
+        <div class="row-text">
+          <div class="label">非 AI 接口优先级</div>
+          <div class="hint">自动：能连 Google 就用免费接口，否则用国内接口（推荐）；也可手动锁定其中一个</div>
+        </div>
+        <select id="nonAiPreference" aria-label="非 AI 接口优先级">
+          <option value="auto">自动（推荐）</option>
+          <option value="google">优先 Google 免费接口</option>
+          <option value="domestic">优先国内接口</option>
+        </select>
+      </div>
+      <div class="row block">
+        <div class="row-text">
+          <div class="label">国内接口来源</div>
+          <div class="hint">默认使用内置接口，<b>不配置也能正常翻译</b>。仅两种情况需要替换：① 内置接口出现异常或被限流；② 你已有百度 / 有道 / 腾讯云的正式账号，希望走官方计费通道并拿到 SLA。</div>
+        </div>
+        <select id="domesticProvider" aria-label="国内接口来源">
+          <option value="builtin">内置（腾讯交互翻译 · 免配置）</option>
+          <option value="baidu">百度翻译开放平台</option>
+          <option value="youdao">有道智云</option>
+          <option value="tencent">腾讯云机器翻译</option>
+        </select>
+
+        <div class="sub-config" id="domesticFields" hidden>
+          <div class="sub-group" id="fields-baidu" hidden>
+            <input id="baiduAppId" type="text" placeholder="APP ID（百度翻译开放平台）" autocomplete="off" spellcheck="false">
+            <input id="baiduKey" type="password" placeholder="密钥" autocomplete="off" spellcheck="false">
+          </div>
+          <div class="sub-group" id="fields-youdao" hidden>
+            <input id="youdaoAppKey" type="text" placeholder="应用 ID" autocomplete="off" spellcheck="false">
+            <input id="youdaoAppSecret" type="password" placeholder="应用密钥" autocomplete="off" spellcheck="false">
+          </div>
+          <div class="sub-group" id="fields-tencent" hidden>
+            <input id="tcSecretId" type="text" placeholder="SecretId" autocomplete="off" spellcheck="false">
+            <input id="tcSecretKey" type="password" placeholder="SecretKey" autocomplete="off" spellcheck="false">
+            <select id="tcRegion" aria-label="腾讯云地域">
+              <option value="ap-guangzhou">华南地区（广州）</option>
+              <option value="ap-beijing">华北地区（北京）</option>
+              <option value="ap-shanghai">华东地区（上海）</option>
+            </select>
+          </div>
+          <div class="inline">
+            <button class="btn" id="saveDomestic">保存</button>
+            <button class="btn ghost" id="testDomestic">测试</button>
+          </div>
+          <p class="test-result" id="domesticResult"></p>
+        </div>
+
+        <p class="sub-note" id="domesticNote">当前使用内置接口（腾讯交互翻译），无需任何配置。</p>
+      </div>
+
+      <div class="row">
+        <div class="row-text">
+          <div class="label">测试当前通道</div>
+          <div class="hint" id="testResult">发送一句示例文本，验证当前通道是否可用</div>
+        </div>
+        <button class="btn ghost" id="testBtn">测试</button>
+      </div>
+      <div class="row block">
+        <div class="row-text">
+          <div class="label">自定义网关（可选）</div>
+          <div class="hint">仅作用于 Google 接口：把 translate.googleapis.com 换成你自建的反向代理根地址，请求路径与参数保持不变。首次保存会请求该地址的访问权限。</div>
+        </div>
+        <div class="inline">
+          <input id="gateway" type="url" placeholder="https://translate.example.com" autocomplete="off" spellcheck="false">
+          <button class="btn" id="saveGateway">保存</button>
+        </div>
+        <p class="test-result" id="gatewayResult"></p>
+      </div>
+      <div class="row">
+        <div class="row-text">
+          <div class="label">缓存策略</div>
+          <div class="hint">全局共享：同一段文本跨站点复用，A 站翻过的 B 站不再重复（默认）；仅当前站点：术语或语境因站而异时启用</div>
+        </div>
+        <select id="cacheScope" aria-label="缓存策略">
+          <option value="global">全局共享</option>
+          <option value="site">仅当前站点</option>
+        </select>
+      </div>
+      <div class="row">
+        <div class="row-text">
+          <div class="label">翻译缓存</div>
+          <div class="hint" id="cacheHint">按站点隔离，保留最近 7 天，浏览器重启后清空</div>
+        </div>
+        <button class="btn ghost" id="clearCache">清除</button>
+      </div>
+    </section>
+
+    <section class="card" id="ai">
+      <h2>AI 翻译模式</h2>
+      <div class="row">
+        <div class="row-text">
+          <div class="label">启用 AI 翻译</div>
+          <div class="hint">用你自备的大模型翻译，语气与术语更可控；开启后独占，Google 与国内接口全部停用</div>
+        </div>
+        <label class="switch"><input type="checkbox" id="aiEnabled"><span class="slider"></span></label>
+      </div>
+      <div class="row block">
+        <div class="row-text">
+          <div class="label">服务商</div>
+          <div class="hint">选择厂家即可，接口地址会自动带出，无需手填</div>
+        </div>
+        <select id="aiProvider" aria-label="AI 服务商"></select>
+      </div>
+      <div class="row block">
+        <div class="row-text">
+          <div class="label">模型</div>
+          <div class="hint" id="aiModelHint">从预设模型中选择，或选「其他」手动填写</div>
+        </div>
+        <select id="aiModelSel" aria-label="AI 模型"></select>
+        <input id="aiModelInput" type="text" placeholder="模型 ID" autocomplete="off" spellcheck="false" hidden>
+      </div>
+      <div class="row block" id="aiBaseWrap" hidden>
+        <div class="row-text">
+          <div class="label">接口地址</div>
+          <div class="hint">仅「自定义」需要填写，需兼容 OpenAI Chat Completions；只填到版本号也可，<code>/chat/completions</code> 会自动补全。</div>
+        </div>
+        <input id="aiBase" type="url" placeholder="https://api.example.com/v1" autocomplete="off" spellcheck="false">
+      </div>
+      <div class="row block">
+        <div class="row-text">
+          <div class="label">API 密钥</div>
+          <div class="hint"><span id="aiKeyHint">粘贴密钥即可</span> <button class="mini-link" id="aiKeyLink" hidden>去获取</button></div>
+        </div>
+        <div class="inline">
+          <input id="aiKey" type="password" placeholder="sk-..." autocomplete="off" spellcheck="false">
+          <button class="btn" id="saveAi">保存</button>
+          <button class="btn ghost" id="testAi">测试</button>
+        </div>
+        <p class="test-result" id="aiResult"></p>
+      </div>
+      <div class="row block">
+        <div class="row-text">
+          <div class="label">Token 消耗</div>
+          <div class="hint" id="aiUsageHint">统计中…</div>
+        </div>
+        <div class="usage">
+          <div class="usage-cell">
+            <span class="usage-num" id="usageTotal">0</span>
+            <span class="usage-cap">总 token</span>
+          </div>
+          <div class="usage-cell">
+            <span class="usage-num" id="usageIn">0</span>
+            <span class="usage-cap">输入</span>
+          </div>
+          <div class="usage-cell">
+            <span class="usage-num" id="usageOut">0</span>
+            <span class="usage-cap">输出</span>
+          </div>
+          <div class="usage-cell">
+            <span class="usage-num" id="usageCost">$0.00</span>
+            <span class="usage-cap">预计花费</span>
+          </div>
+        </div>
+        <div class="inline" style="margin-top:10px">
+          <button class="btn ghost" id="resetUsage">重置统计</button>
+        </div>
+      </div>
+      <div class="row">
+        <div class="row-text">
+          <div class="label">配置状态</div>
+          <div class="hint" id="aiHint">未配置</div>
+        </div>
+        <span class="badge" id="aiBadge">未启用</span>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>快捷键与右键</h2>
+      <div class="row">
+        <div class="row-text">
+          <div class="label">翻译所选文字</div>
+          <div class="hint">默认 Alt+T（macOS 为 Option+T），可自行修改</div>
+        </div>
+        <button class="btn ghost" id="shortcuts">打开快捷键页</button>
+      </div>
+      <div class="row">
+        <div class="row-text">
+          <div class="label">右键菜单</div>
+          <div class="hint">选中文字后右键「翻译所选文字」</div>
+        </div>
+        <span class="badge ok">已启用</span>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>关于</h2>
+      <p>原版 Google 翻译扩展（商店 ID <code>aapbdbdomjkkjkaonfhkkikfgjllcleb</code>，约 3500 万用户）已于 2024 年停止维护并从 Chrome 应用商店下架。其整页翻译能力自 v2.14 起移交 Chrome 内置翻译，扩展本体只剩划词与右键翻译，最终被官方弃用。</p>
+      <p>本扩展按原版交互重新实现：划词浮标 → 译文卡片、右键翻译、快捷键触发。非 Google 官方产品。</p>
+      <p class="muted">非 AI 通道均无需密钥：Google 免费接口适合可直连 Google 的网络，国内接口（腾讯交互翻译）适合无代理环境。Google 触发限流（HTTP 429）时会自动降级到国内接口，无需手动处理。</p>
+    </section>
+
+    <p class="save-state" id="saveState">修改会自动保存</p>
+  </div>
+
+  <script src="langs.js"></script>
+  <script src="options.js"></script>
+</body>
+</html>
