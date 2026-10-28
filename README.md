@@ -179,9 +179,10 @@ AI 开关同时出现在弹窗（翻译引擎分组）与设置页，两处读�
 
 ## 六、安装
 
-1. 打开 `chrome://extensions/`，右上角开启「开发者模式」。
-2. 点击「加载已解压的扩展程序」，选择本项目的 `src` 目录（或解压 `AI翻译专家-v1.7.0.zip` 后选择该目录）。
-3. 在工具栏把图标固定出来，点图标可确认目标语言与整页翻译开关。
+1. 获取源码：`git clone https://github.com/NicoShaoXY/ai-translate-expert.git`，或从 [Releases](https://github.com/NicoShaoXY/ai-translate-expert/releases/latest) 下载 `ai-translate-expert-v1.7.0.zip` 并解压。
+2. 打开 `chrome://extensions/`，右上角开启「开发者模式」。
+3. 点击「加载已解压的扩展程序」，选择本项目的 `src` 目录。
+4. 在工具栏把图标固定出来，点图标可确认目标语言与整页翻译开关。
 
 新装的扩展不会自动注入到已经打开的标签页，刷新一次即可。
 
